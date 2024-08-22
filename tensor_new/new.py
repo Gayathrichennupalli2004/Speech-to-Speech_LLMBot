@@ -7,7 +7,7 @@ import openai
 
 app = Flask(__name__)
 
-# Step 1: Speech Recognition
+
 def recognize_speech():
     recognizer = sr.Recognizer()
     with sr.Microphone() as source:
@@ -24,15 +24,11 @@ def recognize_speech():
         except sr.RequestError:
             print("Could not request results from the speech recognition service.")
             return ""
-
-# Step 2: LLM Response Generation
-# Using a mock response function for now
 def generate_response_mock(prompt):
     return "This is a mock response to your input: " + prompt
 
-# Optionally, you can use OpenAI's GPT-3 (requires API key)
 def generate_response(prompt):
-    openai.api_key = 'G7SsN8ygZZE9P4yVFATdeA2eOI3TBIke'  # Replace with your OpenAI API key
+    openai.api_key = 'G7SsN8ygZZE9P4yVFATdeA2eOI3TBIke' 
     response = openai.Completion.create(
         engine="text-davinci-003",
         prompt=prompt,
@@ -40,15 +36,14 @@ def generate_response(prompt):
     )
     return response.choices[0].text.strip()
 
-# Step 3: Text-to-Speech
 def speak_text(text):
     engine = pyttsx3.init()
     engine.say(text)
     engine.runAndWait()
 
-# Step 4: Webcam Capture
+
 def capture_webcam():
-    cap = cv2.VideoCapture(0)  # Open the default webcam
+    cap = cv2.VideoCapture(0)  
 
     if not cap.isOpened():
         print("Error: Webcam not found or not accessible.")
@@ -57,21 +52,20 @@ def capture_webcam():
     print("Webcam is working. Press 'q' to quit.")
     try:
         while True:
-            ret, frame = cap.read()  # Capture frame-by-frame
+            ret, frame = cap.read()  
             if not ret:
                 print("Error: Failed to capture image.")
                 break
 
-            cv2.imshow('Webcam Test', frame)  # Display the frame
+            cv2.imshow('Webcam Test', frame)  
 
-            if cv2.waitKey(1) & 0xFF == ord('q'):  # Press 'q' to quit
+            if cv2.waitKey(1) & 0xFF == ord('q'): 
                 break
     except KeyboardInterrupt:
         print("Process interrupted by user.")
     finally:
-        cap.release()  # Release the capture
-        cv2.destroyAllWindows()  # Close all OpenCV windows
-
+        cap.release()  
+        cv2.destroyAllWindows()  
 @app.route('/')
 def index():
     return render_template('new.html')
@@ -81,7 +75,7 @@ def start_listening():
     def background_task():
         user_input = recognize_speech()
         if user_input:
-            response = generate_response_mock(user_input)  # Replace with generate_response(user_input) for real LLM
+            response = generate_response_mock(user_input)  
             speak_text(response)
     
     threading.Thread(target=background_task).start()
